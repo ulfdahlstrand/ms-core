@@ -1,0 +1,19 @@
+{
+  "name": "ms-core",
+  "version": "0.0.5",
+  "description": "ms-core",
+  "main": "core.js",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "cors": "^2.8.1",
+    "express": "^4.14.0",
+    "jsonwebtoken": "^7.1.9",
+    "passport": "^0.3.2",
+    "passport-jwt": "^2.2.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no tests specified\" && exit 1"
+  },
+  "author": "Ulf Dahlstrand",
+  "license": "ISC"
+}

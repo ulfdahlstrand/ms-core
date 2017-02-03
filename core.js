@@ -19,6 +19,8 @@ var App = {
 			App.Express.use(passport.authenticate('jwt', { session: false}));
 		}
 
+		require("./core-api/routes")();
+
 		App.Server = App.Express.listen(process.env.PORT || config.port, function() {
 		    console.log("Listening on port %d", App.Server.address().port);
 		});

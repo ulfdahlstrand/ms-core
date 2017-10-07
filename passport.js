@@ -8,11 +8,20 @@ var opts = {
 };
 passport.use(new JwtStrategy(opts, function(jwt_payload, done) {
 
+    let profile = jwt_payload;
+    var username = profile.email.split("@")[0];
+
     var user = {
-      id: jwt_payload.email,
-      email: jwt_payload.email
+      id: profile.id,
+      email: profile.email,
+      username: username,
+      name: {
+        firstname: profile.name.firstname,
+        lastname: profile.name.lastname,
+      },
+      profile: profile
     };
-    
+
     if (user.email) {
         done(null, user);
     } else {

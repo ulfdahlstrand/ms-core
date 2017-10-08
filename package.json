@@ -1,6 +1,6 @@
 {
   "name": "ms-core",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "description": "ms-core",
   "main": "core.js",
   "dependencies": {

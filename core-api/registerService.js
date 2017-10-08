@@ -6,6 +6,7 @@ var register = function(config){
       "name": config.pulse.serviceName,
       "message":"PULSE",
       "scope":"*",
+      "host": config.pulse.host,
       "path": config.pulse.path
     };
 
@@ -15,10 +16,11 @@ var register = function(config){
        .set('Authorization', config.pulse.token)
        .end(function(err, response){
           if (err || !response.ok) {
-            console.log("Failed to register service to " + config.pulse.serviceUrl);
+            console.log("Failed to register service to " + config.pulse.communicatorUrl);
+            console.log(err)
           }
           else {
-            console.log("Register service succeeded to " + config.pulse.serviceUrl);
+            console.log("Register service succeeded to " + config.pulse.communicatorUrl);
           }
     });
   }

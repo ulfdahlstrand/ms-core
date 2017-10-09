@@ -3,11 +3,11 @@ var express = require("express");
 var bodyParser = require("body-parser");
 var passport = require("./passport.js")
 var cors = require('cors');
-var registerService = require("./core-api/registerService");
-
+var communicator = require("./core-api/messaging")();
 var App = {
 	Express: {},
 	Server: {},
+	Communicator:{},
 	init: function(config) {
 
 		App.Express = express();
@@ -25,8 +25,15 @@ var App = {
 			App.Express.use(passport.authenticate('jwt', { session: false}));
 		}
 
-		registerService(config);
-		
+		communicator.init(config);
+		App.Communicator = {
+			register: communicator.register,
+			sendMessage: communicator.sendMessage,
+		};
+		if(config.pulse && config.pulse.shouldRegister){
+			communicator.register("PULSE", "*", config.pulse.host, config.pulse.path);
+		}
+
 		require("./core-api/routes")();
 
 		App.Server = App.Express.listen(process.env.PORT || config.port, function() {

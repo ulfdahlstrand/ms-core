@@ -7,9 +7,10 @@ var init = function(input_config){
 
 var register = function(message, scope, host, path){
   var communicator = config.communicator;
-  if(communicator && communicator.service && communicator.service.name && communicator.path && communicator.token){
+  var service = config.service;
+  if(communicator && communicator.path && communicator.token && service && service.name){
     var body = {
-      "name": config.service.name,
+      "name": service.name,
       "message": message,
       "scope": scope,
       "host": host,

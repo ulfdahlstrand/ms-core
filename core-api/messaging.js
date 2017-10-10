@@ -9,7 +9,7 @@ var register = function(message, scope, host, path){
   var communicator = config.communicator;
   if(communicator && communicator.service && communicator.service.name && communicator.path && communicator.token){
     var body = {
-      "name": communicator.service.name,
+      "name": config.service.name,
       "message": message,
       "scope": scope,
       "host": host,

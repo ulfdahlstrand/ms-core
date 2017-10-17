@@ -3,7 +3,7 @@ var express = require("express");
 var bodyParser = require("body-parser");
 var passport = require("./passport.js")
 var cors = require('cors');
-var communicator = require("./core-api/messaging")();
+var communicator = require("./core-api/messaging");
 var App = {
 	Express: {},
 	Server: {},
@@ -25,8 +25,7 @@ var App = {
 			App.Express.use(passport.authenticate('jwt', { session: false}));
 		}
 
-		communicator.init(config);
-		App.Communicator = communicator;
+		App.Communicator = communicator(config);;
 		if(config.pulse && config.pulse.shouldRegister){
 			App.Communicator.register("PULSE", "PULSE", config.service.host, config.pulse.path);
 		}

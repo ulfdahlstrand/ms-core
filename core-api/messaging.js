@@ -1,11 +1,19 @@
 var request = require("superagent");
 
-var config;
 var init = function(input_config){
-  config = input_config;
+  var config = input_config;
+  return  {
+    config: input_config,
+    register: function(message, scope, host, path) {
+      register(message, scope, host, path, config);
+    },
+    sendMessage: function(message, scope, data) {
+      sendMessage(message, scope, data, config);
+    },
+  }
 };
 
-var register = function(message, scope, host, path){
+var register = function(message, scope, host, path, config){
   var communicator = config.communicator;
   var service = config.service;
   if(communicator && communicator.path && communicator.token && service && service.name){
@@ -34,11 +42,12 @@ var register = function(message, scope, host, path){
   }
 };
 
-var sendMessage = function(message, scope, data){
+var sendMessage = function(message, scope, data, config){
   var communicator = config.communicator;
-  if(communicator && communicator.service && communicator.service.name && communicator.path && communicator.token){
+  var service = config.service;
+  if(communicator && communicator.path && communicator.token && service && service.name){
     var body = {
-      "name": communicator.service.name,
+      "name": service.name,
       "message":message,
       "scope":scope,
       "data":data
@@ -61,10 +70,4 @@ var sendMessage = function(message, scope, data){
   }
 };
 
-module.exports = function(){
-  return {
-    init: init,
-    register: register,
-    sendMessage: sendMessage
-  };
-}
+module.exports = init;

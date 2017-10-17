@@ -26,12 +26,9 @@ var App = {
 		}
 
 		communicator.init(config);
-		App.Communicator = {
-			register: communicator.register,
-			sendMessage: communicator.sendMessage,
-		};
+		App.Communicator = communicator;
 		if(config.pulse && config.pulse.shouldRegister){
-			communicator.register("PULSE", "*", config.service.host, config.pulse.path);
+			App.Communicator.register("PULSE", "PULSE", config.service.host, config.pulse.path);
 		}
 
 		require("./core-api/routes")();

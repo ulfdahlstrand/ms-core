@@ -19,6 +19,7 @@ var init = function(input_config, callback){
 };
 
 var register = function(message, scope, host, path, config){
+  console.log("Registering  service for " + message +" and " + scope);
   var communicator = config.communicator;
   var service = config.service;
   if(communicator && communicator.path && config.servicetoken && service && service.name){
@@ -48,6 +49,7 @@ var register = function(message, scope, host, path, config){
 };
 
 var sendMessage = function(message, scope, data, config, usertoken){
+  console.log("Sending message");
   var communicator = config.communicator;
   var service = config.service;
   var authToken = usertoken ? usertoken : config.servicetoken;
@@ -76,6 +78,7 @@ var sendMessage = function(message, scope, data, config, usertoken){
 };
 
 var getServiceToken = function(config, callback){
+  console.log("Getting AuthToken for service");
   var body = {
   	"servicename": config.service.name,
   	"password": config.service.secret
@@ -86,7 +89,7 @@ var getServiceToken = function(config, callback){
      .send(body)
      .end(function(err, response){
         if (err || !response.ok) {
-          console.log("Failed to send message to " + config.auth.authServiceUrl);
+          console.log("Failed to get token from " + config.auth.authServiceUrl);
           console.log(err)
         }
         else {

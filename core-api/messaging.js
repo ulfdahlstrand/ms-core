@@ -1,22 +1,27 @@
 var request = require("superagent");
 
-var init = function(input_config){
+var init = function(input_config, callback){
   var config = input_config;
-  return  {
-    config: input_config,
-    register: function(message, scope, host, path) {
-      register(message, scope, host, path, config);
-    },
-    sendMessage: function(message, scope, data) {
-      sendMessage(message, scope, data, config);
-    },
-  }
+
+  getServiceToken(config,function(servicetoken){
+    config.servicetoken = servicetoken;
+    var communicatorInstance = {
+      config: config,
+      register: function(message, scope, host, path) {
+        register(message, scope, host, path, config);
+      },
+      sendMessage: function(message, scope, data, usertoken) {
+        sendMessage(message, scope, data, config, usertoken);
+      },
+    };
+    callback(communicatorInstance);
+  });
 };
 
 var register = function(message, scope, host, path, config){
   var communicator = config.communicator;
   var service = config.service;
-  if(communicator && communicator.path && communicator.token && service && service.name){
+  if(communicator && communicator.path && config.servicetoken && service && service.name){
     var body = {
       "name": service.name,
       "message": message,
@@ -29,7 +34,7 @@ var register = function(message, scope, host, path, config){
     request
        .post(url)
        .send(body)
-       .set('Authorization', config.communicator.token)
+       .set('Authorization', "JWT " + config.servicetoken)
        .end(function(err, response){
           if (err || !response.ok) {
             console.log("Failed to register service to " + url);
@@ -42,10 +47,11 @@ var register = function(message, scope, host, path, config){
   }
 };
 
-var sendMessage = function(message, scope, data, config){
+var sendMessage = function(message, scope, data, config, usertoken){
   var communicator = config.communicator;
   var service = config.service;
-  if(communicator && communicator.path && communicator.token && service && service.name){
+  var authToken = usertoken ? usertoken : config.servicetoken;
+  if(communicator && communicator.path && authToken && service && service.name){
     var body = {
       "name": service.name,
       "message":message,
@@ -53,11 +59,10 @@ var sendMessage = function(message, scope, data, config){
       "data":data
     };
     var url = config.communicator.path + "/communicator/message";
-
     request
        .post(url)
        .send(body)
-       .set('Authorization', config.communicator.token)
+       .set('Authorization', "JWT " + authToken)
        .end(function(err, response){
           if (err || !response.ok) {
             console.log("Failed to send message to " + url);
@@ -69,5 +74,25 @@ var sendMessage = function(message, scope, data, config){
     });
   }
 };
+
+var getServiceToken = function(config, callback){
+  var body = {
+  	"servicename": config.service.name,
+  	"password": config.service.secret
+  };
+
+  request
+     .post(config.auth.authServiceUrl)
+     .send(body)
+     .end(function(err, response){
+        if (err || !response.ok) {
+          console.log("Failed to send message to " + config.auth.authServiceUrl);
+          console.log(err)
+        }
+        else {
+          callback(response.text);
+        }
+  });
+}
 
 module.exports = init;

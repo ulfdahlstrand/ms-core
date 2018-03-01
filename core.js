@@ -17,7 +17,9 @@ var App = {
 			credentials: config.credentials || true,
 		}));
 
-		App.Express.use(bodyParser.urlencoded());
+		App.Express.use(bodyParser.urlencoded({
+		  extended: true
+		}));
 		App.Express.use(bodyParser.json());
 
 		if(config.enableSecurity){
@@ -25,10 +27,12 @@ var App = {
 			App.Express.use(passport.authenticate('jwt', { session: false}));
 		}
 
-		App.Communicator = communicator(config);;
-		if(config.pulse && config.pulse.shouldRegister){
-			App.Communicator.register("PULSE", "PULSE", config.service.host, config.pulse.path);
-		}
+		communicator(config, function(communicatorInstance){
+			App.Communicator = communicatorInstance;
+			if(config.pulse && config.pulse.shouldRegister){
+				App.Communicator.register("PULSE", "PULSE", config.service.host, config.pulse.path);
+			}
+		});
 
 		require("./core-api/routes")();
 

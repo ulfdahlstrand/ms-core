@@ -12,14 +12,15 @@ var App = {
 
 		App.Express = express();
 
+		App.Express.use(bodyParser.urlencoded({
+		  extended: true
+		}));
+
 		App.Express.use(cors({
 			origin: config.origin || true,
 			credentials: config.credentials || true,
 		}));
 
-		App.Express.use(bodyParser.urlencoded({
-		  extended: true
-		}));
 		App.Express.use(bodyParser.json());
 
 		if(config.enableSecurity){

@@ -78,6 +78,7 @@ var sendMessage = function(message, scope, data, config, usertoken){
 };
 
 var getServiceToken = function(config, callback){
+  if(!config.service || config.service.useStoredToken){ return; }
   console.log("Getting AuthToken for service");
   var body = {
   	"servicename": config.service.name,
@@ -93,6 +94,7 @@ var getServiceToken = function(config, callback){
           console.log(err)
         }
         else {
+          console.log("Sucessfully recieved token from " + config.auth.authServiceUrl);
           callback(response.text);
         }
   });
